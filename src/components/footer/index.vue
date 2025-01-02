@@ -35,7 +35,7 @@
   import { IconGithub } from '@arco-design/web-vue/es/icon';
 
   const openGitHub = () => {
-    window.open('https://github.com/admuu/Admin-IM', '_blank');
+    window.open('https://github.com/AdmUU/Admin.IM', '_blank');
   };
 
   const siteConfig = useSiteConfigStore();

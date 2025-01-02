@@ -94,10 +94,10 @@
   if (route.name === 'tcping') {
     pingProtocol.value = 'tcp';
   }
-  if (pingHistory.data.length > 0) {
-    const [firstHistory] = pingHistory.data;
-    inputHost.value = firstHistory;
-  }
+  // if (pingHistory.data.length > 0) {
+  //   const [firstHistory] = pingHistory.data;
+  //   inputHost.value = firstHistory;
+  // }
   const emit = defineEmits(['resetNodelist', 'changePingtype']);
   const modalText = ref('');
   const handlePingType = ref('single');
