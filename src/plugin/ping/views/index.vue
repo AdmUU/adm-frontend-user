@@ -20,6 +20,7 @@
           @reset-nodelist="updateNodelist"
           @change-pingtype="updatePingtype"
         />
+        <PingMap />
         <NodeList
           :key="pingFormKey"
           :ping-type="pingType"
@@ -52,6 +53,7 @@
   import { useRoute, useRouter } from 'vue-router';
   import { getSiteConfig } from '@/api/config';
   import PingForm from '../components/ping-form.vue';
+  import PingMap from '../components/map.vue';
   import NodeList from '../components/node-list.vue';
 
   const route = useRoute();
@@ -113,7 +115,7 @@
     const routeTitle = route.meta.title as string;
     document.title =
       routeTitle !== undefined
-        ? `${routeTitle} - ${siteConfig.site_name}`
+        ? `${routeTitle} - ${siteConfig.site_name} - ${siteConfig.site_subtitle}`
         : `${siteConfig.site_name} - ${siteConfig.site_subtitle}`;
     if (siteConfig.site_logo !== '') {
       const link = document.createElement('link');
