@@ -1,6 +1,6 @@
 <!--
  - This file is part of AdminIM.
- - 
+ -
  - @link     https://www.admin.im
  - @github   https://github.com/51/admin.im
  - @contact  dev@admin.im
@@ -38,6 +38,7 @@
     TableData,
     TableColumnData,
   } from '@arco-design/web-vue/es/table/interface';
+  import tool from '@/utils/tool';
   import { useI18n } from 'vue-i18n';
   import {
     pingChartWidth,
@@ -76,10 +77,7 @@
       align: 'center',
       render: (data: { record: TableData }) => {
         if (data.record.response_time === undefined) return '--';
-        if (data.record.response_time === 0)
-          return t('plugin.ping.node.table.data.timeout');
-        if (data.record.response_time < 1) return '<1ms';
-        return `${Math.floor(data.record.response_time)}ms`;
+        return tool.formatDelay(data.record.response_time);
       },
       bodyCellStyle: (record) => {
         if (record.response_time === 0) {

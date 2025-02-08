@@ -10,6 +10,7 @@ const useSiteConfigStore = defineStore('siteConfig', {
     site_copyright: '',
     site_record_number: '',
     index_banner: '',
+    enable_ping_china_map: '',
   }),
   actions: {
     updateConfig(config: Partial<SiteConfig>) {

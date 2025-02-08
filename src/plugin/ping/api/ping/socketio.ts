@@ -1,6 +1,7 @@
 import { ref } from 'vue';
 import useSocket from '@/utils/socketio';
 import axios, { AxiosRequestConfig } from 'axios';
+import tool from '@/utils/tool';
 import { nodeList, tcpPingDataMap } from '../node/node';
 import { initCanvas, pingChartCanvas } from '../node/canvas';
 
@@ -21,6 +22,16 @@ export interface RequestSocketData {
   //  host: string;
   token: string;
   task_id: string;
+}
+
+/**
+ * Response IPs set
+ */
+export interface ResponseIPs {
+  all: string[];
+  ipv4: string[];
+  ipv6: string[];
+  port: number | null;
 }
 
 /**
@@ -64,6 +75,21 @@ export async function requestSocket(
   return requestSocketData;
 }
 
+export const singleTaskEnd = ref(false);
+export const responseIPAll = ref([]);
+export const responseIPValid = ref<ResponseIPs>({
+  all: [],
+  ipv4: [],
+  ipv6: [],
+  port: null,
+});
+export const responseChinaIPValid = ref({
+  all: [],
+  ipv4: [],
+  ipv6: [],
+  port: null,
+});
+
 const nodeDelaySet: DelaySet = {};
 const nodeDelaySum: DelayNum = {};
 const nodeDelayLength: DelayNum = {};
@@ -85,6 +111,12 @@ const socketio = async (params: RequestSocketData) => {
     if (packet > 0 && packet < 1) return '<1';
     return Math.floor(packet);
   };
+  const taskQueue = {};
+  singleTaskEnd.value = false;
+  responseIPAll.value = [];
+  responseIPValid.value = { all: [], ipv4: [], ipv6: [], port: null };
+  responseChinaIPValid.value = { all: [], ipv4: [], ipv6: [], port: null };
+  let taskTimerId = null;
   socket.on('connect', () => {
     isConnected.value = true;
     Object.keys(nodeDelaySet).forEach((key) => delete nodeDelaySet[key]);
@@ -118,12 +150,74 @@ const socketio = async (params: RequestSocketData) => {
         nodeList.value[
           tcpPingDataMap.value[message.did]
         ].response_ip = `${message.ip}`;
+
+        if (!responseIPAll.value[`${message.ip}`]) {
+          responseIPAll.value[`${message.ip}`] = tool.checkIP(message.ip);
+        }
+
+        if (
+          responseIPAll.value[`${message.ip}`].isValid &&
+          !responseIPValid.value.all.includes(
+            responseIPAll.value[`${message.ip}`].ip
+          )
+        ) {
+          responseIPValid.value.all.push(
+            responseIPAll.value[`${message.ip}`].ip
+          );
+          if (
+            nodeList.value[tcpPingDataMap.value[message.did]].country_en ===
+            'China'
+          ) {
+            responseChinaIPValid.value.all.push(
+              responseIPAll.value[`${message.ip}`].ip
+            );
+          }
+
+          if (responseIPAll.value[`${message.ip}`].type === 'IPv4') {
+            responseIPValid.value.ipv4.push(
+              responseIPAll.value[`${message.ip}`].ip
+            );
+            if (
+              nodeList.value[tcpPingDataMap.value[message.did]].country_en ===
+              'China'
+            ) {
+              responseChinaIPValid.value.ipv4.push(
+                responseIPAll.value[`${message.ip}`].ip
+              );
+            }
+          }
+          if (responseIPAll.value[`${message.ip}`].type === 'IPv6') {
+            responseIPValid.value.ipv6.push(
+              responseIPAll.value[`${message.ip}`].ip
+            );
+            if (
+              nodeList.value[tcpPingDataMap.value[message.did]].country_en ===
+              'China'
+            ) {
+              responseChinaIPValid.value.ipv6.push(
+                responseIPAll.value[`${message.ip}`].ip
+              );
+            }
+          }
+          if (responseIPAll.value[`${message.ip}`].port) {
+            responseIPValid.value.port =
+              responseIPAll.value[`${message.ip}`].port;
+            if (
+              nodeList.value[tcpPingDataMap.value[message.did]].country_en ===
+              'China'
+            ) {
+              responseChinaIPValid.value.port =
+                responseIPAll.value[`${message.ip}`].port;
+            }
+          }
+        }
       }
       if (message.location) {
         nodeList.value[
           tcpPingDataMap.value[message.did]
         ].response_ip_location = `${message.location}`;
       }
+
       if (message.delay !== undefined) {
         if (nodePingtype === 'continuous') {
           if (nodeDelaySet[message.did] === undefined) {
@@ -161,8 +255,22 @@ const socketio = async (params: RequestSocketData) => {
 
           initCanvas(pingChartCanvas[message.did], message.did, message.delay);
         } else {
+          if (!taskQueue[`${params.token}`]) {
+            taskQueue[`${params.token}`] = [message.did];
+            taskTimerId = setTimeout(() => {
+              singleTaskEnd.value = true;
+              socket.disconnect();
+            }, 3000);
+          } else {
+            taskQueue[`${params.token}`].push(message.did);
+          }
           nodeList.value[tcpPingDataMap.value[message.did]].response_time =
             message.delay;
+          if (taskQueue[`${params.token}`].length === nodeList.value.length) {
+            singleTaskEnd.value = true;
+            clearTimeout(taskTimerId);
+            taskTimerId = null;
+          }
         }
       }
     }
