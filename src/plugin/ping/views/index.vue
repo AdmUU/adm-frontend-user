@@ -1,6 +1,6 @@
 <!--
  - This file is part of AdminIM.
- - 
+ -
  - @link     https://www.admin.im
  - @github   https://github.com/51/admin.im
  - @contact  dev@admin.im
@@ -20,7 +20,7 @@
           @reset-nodelist="updateNodelist"
           @change-pingtype="updatePingtype"
         />
-        <PingMap />
+        <PingMap v-if="singleTaskEnd" />
         <NodeList
           :key="pingFormKey"
           :ping-type="pingType"
@@ -55,6 +55,7 @@
   import PingForm from '../components/ping-form.vue';
   import PingMap from '../components/map.vue';
   import NodeList from '../components/node-list.vue';
+  import { singleTaskEnd } from '../api/ping/socketio';
 
   const route = useRoute();
   const router = useRouter();
@@ -78,6 +79,7 @@
 
   function updateNodeListComplete() {
     if (resolveNodelist) {
+      // showPingMap.value = true;
       nodeListRef.value.createSocketIO();
     }
   }

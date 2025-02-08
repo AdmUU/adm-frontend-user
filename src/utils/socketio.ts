@@ -15,7 +15,7 @@ export default function useSocket() {
       autoConnect: true,
       reconnectionDelayMax: 10000,
       reconnectionDelay: 1000,
-      reconnectionAttempts: 5,
+      reconnectionAttempts: 1,
       query: { token, locale },
     });
 

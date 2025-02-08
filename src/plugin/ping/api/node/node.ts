@@ -7,9 +7,15 @@ import axios, { AxiosRequestConfig } from 'axios';
 export interface NodeRecord {
   key: string;
   node_name: string;
+  country: string;
+  country_en?: string;
+  province?: string;
+  province_en?: string;
+  isp?: string;
+  isp_en?: string;
   response_ip?: string;
   response_ip_location?: string;
-  response_time?: number | string;
+  response_time?: number;
   packet_loss?: number | string;
   packet_min?: number | string;
   packet_max?: number | string;
@@ -47,10 +53,15 @@ interface ApiNodeItem {
   name: string;
   name_en: string;
   country: string;
+  country_name: string;
+  country_name_en: string;
   province: string;
+  province_name: string;
   region: string;
   continent: string;
   isp: string;
+  isp_name: string;
+  isp_name_en: string;
   online_total_time: number | null;
   online_last_time: number | null;
   sponsor_name: string | null;
@@ -87,6 +98,12 @@ export async function queryNodeList(
   nodeList.value = response.data.map((item) => ({
     key: item.did.toString(),
     node_name: locale === 'en-US' ? item.name_en : item.name,
+    country: item.country_name,
+    country_en: item.country_name_en,
+    province: item.province_name,
+    province_en: item.province,
+    isp: item.isp_name,
+    isp_en: item.isp_name_en,
     response_ip: '--',
     response_ip_location: '--',
     packet_min: '--',
