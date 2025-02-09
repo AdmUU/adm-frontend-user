@@ -10,6 +10,7 @@ dist-ssr
 *.bak
 *.back
 .idea
+components.d.ts
 .env
 .env.development
 .env.production

@@ -140,6 +140,7 @@
   const { t } = i18n.global;
   const siteConfig = useSiteConfigStore();
 
+  // Calculate map nodes
   const mapNodes = (
     nodeRecordList: NodeRecord[],
     mapType: 'country' | 'province' | 'isp'
@@ -224,10 +225,12 @@
     countryNodeList.find((node) => node.name_en === 'China').list,
     'province'
   );
+
   calMapNodes(countryNodeList);
   calMapNodes(ispNodeList);
   calMapNodes(provinceNodeList);
 
+  // FastestNode and slowestNode
   const responseIPs = ref(responseIPValid.value);
   const responseChinaIPs = ref(responseChinaIPValid.value);
   const fastestNode = ref<NodeRecord>({ key: '', node_name: '', country: '' });
@@ -249,7 +252,7 @@
   }
 
   if (timeoutFirstNode) {
-    slowestNode.value = timeoutFirstNode;
+    slowestNode.value = { ...timeoutFirstNode };
     slowestNode.value.response_time = undefined;
   } else {
     const maxValidNode =
@@ -265,34 +268,69 @@
       slowestNode.value = maxValidNode;
     }
   }
+  // Top country node list
+  const getEstTopNodeLen = (
+    estnodeList: MapStatNodes | NodeRecord[],
+    timeKey: string,
+    topNodeLimit: number
+  ) => {
+    const estnodeListLength = estnodeList.length;
 
-  const topNodeLimit = 4;
+    const halfEstNodeLen =
+      Math.ceil(estnodeListLength / 2) > topNodeLimit
+        ? topNodeLimit
+        : Math.ceil(estnodeListLength / 2);
 
-  const topNodeLen =
-    Math.floor(countryNodeList.length / 2) > topNodeLimit
-      ? topNodeLimit
-      : Math.floor(countryNodeList.length / 2);
+    const timeoutEstNodeIndex = estnodeList.findIndex(
+      (item) => item[`${timeKey}`] === 0
+    );
 
-  const fastestNodeData = reactive(
-    countryNodeList.filter((item) => item.packet_avg > 0).slice(0, topNodeLen)
+    let fastestEstNodeLen = halfEstNodeLen;
+    let slowestEstNodeLen = halfEstNodeLen;
+
+    if (timeoutEstNodeIndex === -1 && halfEstNodeLen * 2 > estnodeListLength) {
+      slowestEstNodeLen = halfEstNodeLen - 1;
+    }
+
+    if (timeoutEstNodeIndex >= 0) {
+      fastestEstNodeLen =
+        halfEstNodeLen <= timeoutEstNodeIndex
+          ? halfEstNodeLen
+          : timeoutEstNodeIndex;
+      const slowestEstNodeTmpIndex =
+        estnodeListLength - timeoutEstNodeIndex < topNodeLimit
+          ? estnodeListLength - timeoutEstNodeIndex
+          : topNodeLimit;
+      slowestEstNodeLen =
+        halfEstNodeLen > slowestEstNodeTmpIndex
+          ? halfEstNodeLen
+          : slowestEstNodeTmpIndex;
+    }
+    return [fastestEstNodeLen, slowestEstNodeLen];
+  };
+
+  const fastestNodeData = ref();
+  const slowestNodeData = ref();
+  const [fastestCountryNodeLen, slowestCountryNodeLen] = getEstTopNodeLen(
+    countryNodeList,
+    'packet_avg',
+    4
   );
 
-  let timeoutCountryNodeLen = countryNodeList.filter(
-    (item) => item.packet_avg === 0
-  ).length;
-  timeoutCountryNodeLen =
-    timeoutCountryNodeLen > topNodeLimit ? topNodeLimit : timeoutCountryNodeLen;
+  if (fastestCountryNodeLen > 0) {
+    fastestNodeData.value = countryNodeList.slice(0, fastestCountryNodeLen);
+  }
 
-  const slowestCountryNodeLen =
-    timeoutCountryNodeLen <= topNodeLen ? topNodeLen : timeoutCountryNodeLen;
+  if (slowestCountryNodeLen > 0) {
+    slowestNodeData.value = countryNodeList
+      .slice(-slowestCountryNodeLen)
+      .reverse();
+  }
 
-  const slowestNodeData = reactive(
-    countryNodeList.slice(-slowestCountryNodeLen).reverse()
-  );
-
-  const TABLE_WIDTH = 155;
-  const NODE_NAME_WIDTH = Math.floor(TABLE_WIDTH * 0.6);
-  const DELAY_WIDTH = Math.floor(TABLE_WIDTH * 0.4);
+  // Top node table definition
+  const FASTEST_NODE_TABLE_WIDTH = 155;
+  const NODE_NAME_WIDTH = Math.floor(FASTEST_NODE_TABLE_WIDTH * 0.6);
+  const DELAY_WIDTH = Math.floor(FASTEST_NODE_TABLE_WIDTH * 0.4);
 
   const fastestNodeColumns = computed<TableColumnData[]>(() => [
     {
@@ -410,37 +448,30 @@
     },
   ]);
 
+  // Top CN node list
   const topCNNodeList = countryNodeList.find(
     (node) => node.name_en === 'China'
   ).list;
 
-  const topCNNodeLimit = 3;
-
-  const fastestCNNodeLen =
-    Math.floor(topCNNodeList.length / 2) > topCNNodeLimit
-      ? topCNNodeLimit
-      : Math.floor(topCNNodeList.length / 2);
-
-  const fastestChinaNodeData = reactive(
-    topCNNodeList
-      .filter((item) => item.response_time > 0)
-      .slice(0, fastestCNNodeLen)
+  const fastestChinaNodeData = ref();
+  const slowestChinaNodeData = ref();
+  const [fastestCNNodeLen, slowestCNNodeLen] = getEstTopNodeLen(
+    topCNNodeList,
+    'response_time',
+    3
   );
 
-  let timeoutCNNodeLen = topCNNodeList.filter(
-    (item) => item.response_time === 0
-  ).length;
+  if (fastestCNNodeLen > 0) {
+    fastestChinaNodeData.value = topCNNodeList.slice(0, fastestCNNodeLen);
+  }
 
-  timeoutCNNodeLen =
-    timeoutCNNodeLen > topCNNodeLimit ? topCNNodeLimit : timeoutCNNodeLen;
+  if (slowestCNNodeLen > 0) {
+    slowestChinaNodeData.value = topCNNodeList
+      .slice(-slowestCNNodeLen)
+      .reverse();
+  }
 
-  const slowestCNNodeLen =
-    timeoutCNNodeLen <= fastestCNNodeLen ? fastestCNNodeLen : timeoutCNNodeLen;
-
-  const slowestChinaNodeData = reactive(
-    topCNNodeList.slice(-slowestCNNodeLen).reverse()
-  );
-
+  // Map chart definition
   const worldChartData = reactive(
     countryNodeList.map((node) => {
       return {
@@ -462,15 +493,18 @@
       };
     })
   );
+
   const chartRef = ref(null);
   let chart = null;
   const defaultaMap = 'world';
   const selectedMap = ref('world');
 
-  echarts.registerMap('world', worldJson);
+  const worldJsonData = worldJson as any;
+  echarts.registerMap('world', worldJsonData);
 
   if (siteConfig.enable_ping_china_map === 'true') {
-    echarts.registerMap('china', chinaJson);
+    const chinaJsonData = chinaJson as any;
+    echarts.registerMap('china', chinaJsonData);
     if (defaultaMap !== 'world') {
       selectedMap.value = 'china';
     }
