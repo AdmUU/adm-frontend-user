@@ -1,66 +1,84 @@
-import { mergeConfig } from 'vite'
-import eslint from 'vite-plugin-eslint'
-import baseConfig from './vite.config.base'
+import { mergeConfig, loadEnv } from 'vite';
+import eslint from 'vite-plugin-eslint';
+import baseConfig from './vite.config.base';
 
 const proxyApiPrefix = '/api';
 const proxyStaticPrefix = '/static';
 const proxyUploadPrefix = '/upload';
 const proxySocketIOPrefix = '/socket.io';
-export default mergeConfig(
-  {
-    mode: 'development',
-    server: {
-      host: '0.0.0.0',
-      port: 2999,
-      proxy: {
-        [proxyApiPrefix]: {
-          target: 'http://127.0.0.1:9501',
-          changeOrigin: true,
-          toProxy: true,
-          rewrite: (path) => path.replace(new RegExp(`^${proxyApiPrefix}`), ''),
-          cookieDomainRewrite: {
-            '*': '',
+const proxyManagePrefix = '/manage';
+
+export default ({ mode }) => {
+  const env = loadEnv(mode, process.cwd());
+  const port = parseInt(env.VITE_PORT || '9511', 10);
+  const apiUrl = env.VITE_PROXY_API_URL || 'http://127.0.0.1:9501';
+  const socketIOUrl = env.VITE_PROXY_SOCKETIO_URL || 'http://127.0.0.1:9503';
+  const manageUrl = env.VITE_PROXY_MANAGE_URL || 'http://127.0.0.1:9512';
+
+  return mergeConfig(
+    {
+      mode: 'development',
+      server: {
+        host: '0.0.0.0',
+        port,
+        proxy: {
+          [proxyApiPrefix]: {
+            target: apiUrl,
+            changeOrigin: true,
+            toProxy: true,
+            rewrite: (path) =>
+              path.replace(new RegExp(`^${proxyApiPrefix}`), ''),
+            cookieDomainRewrite: {
+              '*': '',
+            },
+            cookiePathRewrite: {
+              '*': '/',
+            },
+            headers: {
+              'Access-Control-Allow-Origin': '*',
+            },
           },
-          cookiePathRewrite: {
-            '*': '/',
+          [proxySocketIOPrefix]: {
+            target: socketIOUrl,
+            changeOrigin: true,
+            ws: true,
+            toProxy: true,
           },
-          headers: {
-            'Access-Control-Allow-Origin': '*',
+          [proxyStaticPrefix]: {
+            target: `${apiUrl}/static`,
+            changeOrigin: true,
+            toProxy: true,
+            rewrite: (path) =>
+              path.replace(new RegExp(`^${proxyStaticPrefix}`), ''),
+          },
+          [proxyUploadPrefix]: {
+            target: `${apiUrl}/upload`,
+            changeOrigin: true,
+            toProxy: true,
+            rewrite: (path) =>
+              path.replace(new RegExp(`^${proxyUploadPrefix}`), ''),
+          },
+          [proxyManagePrefix]: {
+            target: `${manageUrl}/manage`,
+            changeOrigin: true,
+            toProxy: true,
+            rewrite: (path) =>
+              path.replace(new RegExp(`^${proxyManagePrefix}`), ''),
           },
         },
-        [proxySocketIOPrefix]: {
-          target: 'http://127.0.0.1:9503',
-          changeOrigin: true,
-          ws: true,
-          toProxy: true,
-        },
-        [proxyStaticPrefix]: {
-          target: 'http://127.0.0.1:9501/static',
-          changeOrigin: true,
-          toProxy: true,
-          rewrite: (path) =>
-            path.replace(new RegExp(`^${proxyStaticPrefix}`), ''),
-        },
-        [proxyUploadPrefix]: {
-          target: 'http://127.0.0.1:9501/upload',
-          changeOrigin: true,
-          toProxy: true,
-          rewrite: (path) =>
-            path.replace(new RegExp(`^${proxyUploadPrefix}`), ''),
+        open: false,
+        fs: {
+          strict: true,
         },
       },
-      open: false,
-      fs: {
-        strict: true,
-      },
+      plugins: [
+        eslint({
+          cache: true,
+          include: ['src/**/*.ts', 'src/**/*.tsx', 'src/**/*.vue'],
+          exclude: ['node_modules'],
+        }),
+      ],
     },
-    plugins: [
-      eslint({
-        cache: true,
-        include: ['src/**/*.ts', 'src/**/*.tsx', 'src/**/*.vue'],
-        exclude: ['node_modules'],
-      }),
-    ],
-  },
-  baseConfig
-);
+    baseConfig
+  );
+};
