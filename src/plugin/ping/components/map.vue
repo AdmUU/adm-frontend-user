@@ -93,7 +93,7 @@
         class="tables-wrapper"
       >
         <div class="carrier-table">
-          <MapIP :response-ips="responseChinaIPs" />
+          <MapIP v-show="chinaNodeList" :response-ips="responseChinaIPs" />
           <a-table
             :columns="carrierColumns"
             :data="carrierData"
@@ -217,14 +217,15 @@
     return '--';
   };
   const countryNodeList = mapNodes(nodeList.value, 'country');
-  const ispNodeList = mapNodes(
-    countryNodeList.find((node) => node.name_en === 'China').list,
-    'isp'
+  let ispNodeList: MapStatNodes = [];
+  let provinceNodeList: MapStatNodes = [];
+  const chinaNodeList = countryNodeList.find(
+    (node) => node.name_en === 'China'
   );
-  const provinceNodeList = mapNodes(
-    countryNodeList.find((node) => node.name_en === 'China').list,
-    'province'
-  );
+  if (chinaNodeList) {
+    ispNodeList = mapNodes(chinaNodeList.list, 'isp');
+    provinceNodeList = mapNodes(chinaNodeList.list, 'province');
+  }
 
   calMapNodes(countryNodeList);
   calMapNodes(ispNodeList);
@@ -449,26 +450,26 @@
   ]);
 
   // Top CN node list
-  const topCNNodeList = countryNodeList.find(
-    (node) => node.name_en === 'China'
-  ).list;
-
   const fastestChinaNodeData = ref();
   const slowestChinaNodeData = ref();
-  const [fastestCNNodeLen, slowestCNNodeLen] = getEstTopNodeLen(
-    topCNNodeList,
-    'response_time',
-    3
-  );
+  if (chinaNodeList) {
+    const topCNNodeList = chinaNodeList.list;
 
-  if (fastestCNNodeLen > 0) {
-    fastestChinaNodeData.value = topCNNodeList.slice(0, fastestCNNodeLen);
-  }
+    const [fastestCNNodeLen, slowestCNNodeLen] = getEstTopNodeLen(
+      topCNNodeList,
+      'response_time',
+      3
+    );
 
-  if (slowestCNNodeLen > 0) {
-    slowestChinaNodeData.value = topCNNodeList
-      .slice(-slowestCNNodeLen)
-      .reverse();
+    if (fastestCNNodeLen > 0) {
+      fastestChinaNodeData.value = topCNNodeList.slice(0, fastestCNNodeLen);
+    }
+
+    if (slowestCNNodeLen > 0) {
+      slowestChinaNodeData.value = topCNNodeList
+        .slice(-slowestCNNodeLen)
+        .reverse();
+    }
   }
 
   // Map chart definition
