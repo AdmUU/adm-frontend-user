@@ -194,12 +194,12 @@ const tool: Tool = {
   },
 
   isValidIPv6: (ip) => {
-    ip = ip.replace(/^\[|\]$/g, '');
-
-    const ipv6Regex =
-      /^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$|^::(?:[0-9a-fA-F]{1,4}:){0,6}[0-9a-fA-F]{1,4}$|^[0-9a-fA-F]{1,4}::(?:[0-9a-fA-F]{1,4}:){0,5}[0-9a-fA-F]{1,4}$|^[0-9a-fA-F]{1,4}:[0-9a-fA-F]{1,4}::(?:[0-9a-fA-F]{1,4}:){0,4}[0-9a-fA-F]{1,4}$|^(?:[0-9a-fA-F]{1,4}:){2}::(?:[0-9a-fA-F]{1,4}:){0,3}[0-9a-fA-F]{1,4}$|^(?:[0-9a-fA-F]{1,4}:){3}::(?:[0-9a-fA-F]{1,4}:){0,2}[0-9a-fA-F]{1,4}$|^(?:[0-9a-fA-F]{1,4}:){4}::(?:[0-9a-fA-F]{1,4}:)?[0-9a-fA-F]{1,4}$|^(?:[0-9a-fA-F]{1,4}:){5}::[0-9a-fA-F]{1,4}$|^(?:[0-9a-fA-F]{1,4}:){6}:$|^(?:[0-9a-fA-F]{1,4}:){7}:$/;
-
-    return ipv6Regex.test(ip);
+    try {
+      const parsedUrl = new URL(`http://[${ip}]`);
+      return parsedUrl.hostname.includes(':');
+    } catch {
+      return false;
+    }
   },
 
   convertToNumber: (value) => {
