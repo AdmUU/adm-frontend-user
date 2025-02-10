@@ -249,7 +249,10 @@
         })
       : null;
   if (minValidNode) {
-    fastestNode.value = minValidNode;
+    fastestNode.value = { ...minValidNode };
+    if (fastestNode.value.response_time < 1) {
+      fastestNode.value.response_time = 1;
+    }
   }
 
   if (timeoutFirstNode) {
@@ -615,7 +618,7 @@
           { min: 200, max: 250, label: '201ms-250ms', color: '#F7D100' },
           { min: 100, max: 200, label: '101ms-200ms', color: '#94DC1F' },
           { min: 50, max: 100, label: '51ms-100ms', color: 'LimeGreen' },
-          { min: 0.001, max: 50, label: '≤50ms', color: '#24AA1D' },
+          { min: 0.001, max: 50, label: '≤50ms', color: '#0D9805' },
         ],
         textStyle: {
           color: '#333',

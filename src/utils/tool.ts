@@ -223,7 +223,7 @@ const tool: Tool = {
     if (delay > 200 && delay <= 250) return '#F7D100';
     if (delay > 100 && delay <= 200) return '#94DC1F';
     if (delay > 50 && delay <= 100) return 'LimeGreen';
-    if (delay > 0 && delay <= 50) return '#24AA1D';
+    if (delay > 0 && delay <= 50) return '#0D9805';
     return '#e61500';
   },
 };
