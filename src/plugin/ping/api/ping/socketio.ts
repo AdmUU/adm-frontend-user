@@ -155,57 +155,53 @@ const socketio = async (params: RequestSocketData) => {
           responseIPAll.value[`${message.ip}`] = tool.checkIP(message.ip);
         }
 
-        if (
-          responseIPAll.value[`${message.ip}`].isValid &&
-          !responseIPValid.value.all.includes(
-            responseIPAll.value[`${message.ip}`].ip
-          )
-        ) {
-          responseIPValid.value.all.push(
-            responseIPAll.value[`${message.ip}`].ip
-          );
+        if (responseIPAll.value[`${message.ip}`].isValid) {
+          if (
+            !responseIPValid.value.all.includes(
+              responseIPAll.value[`${message.ip}`].ip
+            )
+          ) {
+            responseIPValid.value.all.push(
+              responseIPAll.value[`${message.ip}`].ip
+            );
+            if (responseIPAll.value[`${message.ip}`].type === 'IPv4') {
+              responseIPValid.value.ipv4.push(
+                responseIPAll.value[`${message.ip}`].ip
+              );
+            }
+            if (responseIPAll.value[`${message.ip}`].type === 'IPv6') {
+              responseIPValid.value.ipv6.push(
+                responseIPAll.value[`${message.ip}`].ip
+              );
+            }
+            if (responseIPAll.value[`${message.ip}`].port) {
+              responseIPValid.value.port =
+                responseIPAll.value[`${message.ip}`].port;
+            }
+          }
+
           if (
             nodeList.value[tcpPingDataMap.value[message.did]].country_en ===
-            'China'
+              'China' &&
+            !responseChinaIPValid.value.all.includes(
+              responseIPAll.value[`${message.ip}`].ip
+            )
           ) {
             responseChinaIPValid.value.all.push(
               responseIPAll.value[`${message.ip}`].ip
             );
-          }
 
-          if (responseIPAll.value[`${message.ip}`].type === 'IPv4') {
-            responseIPValid.value.ipv4.push(
-              responseIPAll.value[`${message.ip}`].ip
-            );
-            if (
-              nodeList.value[tcpPingDataMap.value[message.did]].country_en ===
-              'China'
-            ) {
+            if (responseIPAll.value[`${message.ip}`].type === 'IPv4') {
               responseChinaIPValid.value.ipv4.push(
                 responseIPAll.value[`${message.ip}`].ip
               );
             }
-          }
-          if (responseIPAll.value[`${message.ip}`].type === 'IPv6') {
-            responseIPValid.value.ipv6.push(
-              responseIPAll.value[`${message.ip}`].ip
-            );
-            if (
-              nodeList.value[tcpPingDataMap.value[message.did]].country_en ===
-              'China'
-            ) {
+            if (responseIPAll.value[`${message.ip}`].type === 'IPv6') {
               responseChinaIPValid.value.ipv6.push(
                 responseIPAll.value[`${message.ip}`].ip
               );
             }
-          }
-          if (responseIPAll.value[`${message.ip}`].port) {
-            responseIPValid.value.port =
-              responseIPAll.value[`${message.ip}`].port;
-            if (
-              nodeList.value[tcpPingDataMap.value[message.did]].country_en ===
-              'China'
-            ) {
+            if (responseIPAll.value[`${message.ip}`].port) {
               responseChinaIPValid.value.port =
                 responseIPAll.value[`${message.ip}`].port;
             }
