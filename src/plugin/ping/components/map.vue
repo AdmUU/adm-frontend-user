@@ -663,6 +663,7 @@
     if (chartRef.value) {
       chart = echarts.init(chartRef.value);
       updateChart(selectedMap.value);
+      chartRef.value.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
