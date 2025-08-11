@@ -70,6 +70,11 @@ export default ({ mode }) => {
         fs: {
           strict: true,
         },
+        allowedHosts: [
+          'localhost',
+          '127.0.0.1',
+          '.admin.im',
+        ],
       },
       plugins: [
         eslint({
