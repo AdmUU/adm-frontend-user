@@ -1,6 +1,10 @@
 <template>
   <div class="content">
-    <a-result class="result" status="500" :subtitle="'Loading...'"> </a-result>
+    <a-result class="result" status="500">
+      <template #icon>
+        <a-spin dot />
+      </template>
+    </a-result>
   </div>
 </template>
 
