@@ -38,6 +38,7 @@
     TableData,
     TableColumnData,
   } from '@arco-design/web-vue/es/table/interface';
+  import { Spin } from '@arco-design/web-vue';
   import tool from '@/utils/tool';
   import { useI18n } from 'vue-i18n';
   import {
@@ -63,6 +64,12 @@
       dataIndex: 'response_ip',
       width: 350,
       align: 'center',
+      render: (data: { record: TableData }) => {
+        if (data.record.isLoadingIP) {
+          return h(Spin, { size: 12 });
+        }
+        return data.record.response_ip || '--';
+      },
     },
     {
       title: t('plugin.ping.node.table.title.IPLocation'),
@@ -103,6 +110,12 @@
       dataIndex: 'response_ip',
       width: 290,
       align: 'center',
+      render: (data: { record: TableData }) => {
+        if (data.record.isLoadingIP) {
+          return h(Spin, { size: 12 });
+        }
+        return data.record.response_ip || '--';
+      },
     },
     {
       title: t('plugin.ping.node.table.title.IPLocation'),

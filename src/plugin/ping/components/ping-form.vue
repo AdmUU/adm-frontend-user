@@ -1,6 +1,6 @@
 <!--
  - This file is part of AdminIM.
- - 
+ -
  - @link     https://www.admin.im
  - @github   https://github.com/51/admin.im
  - @contact  dev@admin.im
@@ -41,6 +41,7 @@
         type="primary"
         shape="round"
         size="large"
+        :loading="singleTaskLoading"
         @click.stop="handlePing(pingProtocol, 'single')"
         >{{ $t('plugin.ping.form.button.singleTest') }}</a-button
       >
@@ -49,6 +50,7 @@
         shape="round"
         size="large"
         status="success"
+        :loading="continuousTaskLoading"
         @click.stop="handlePing(pingProtocol, 'continuous')"
         >{{ $t('plugin.ping.form.button.continuousTest') }}</a-button
       >
@@ -87,6 +89,12 @@
     RequestSocketData,
   } from '../api/ping/socketio';
 
+  import {
+    updateNodeLoadingState,
+    singleTaskLoading,
+    continuousTaskLoading,
+  } from '../api/node/node';
+
   const { t } = useI18n();
   const route = useRoute();
   const modalVisible = ref(false);
@@ -106,7 +114,13 @@
   const handlePing = async (protocol: string, pingtype: string) => {
     const host = inputHost.value;
     handlePingType.value = pingtype;
-    // pingFormKey.value = 1;
+    updateNodeLoadingState(true);
+    if (pingtype === 'single') {
+      singleTaskLoading.value = true;
+    }
+    if (pingtype === 'continuous') {
+      continuousTaskLoading.value = true;
+    }
     if (
       !validator.isIP(host, 4) &&
       !validator.isIP(host, 6) &&

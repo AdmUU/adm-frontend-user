@@ -2,7 +2,7 @@ import { ref } from 'vue';
 import useSocket from '@/utils/socketio';
 import axios, { AxiosRequestConfig } from 'axios';
 import tool from '@/utils/tool';
-import { nodeList, tcpPingDataMap } from '../node/node';
+import { nodeList, tcpPingDataMap, singleTaskLoading } from '../node/node';
 
 type DelaySet = {
   [key: string]: number[];
@@ -110,6 +110,7 @@ const socketio = async (params: RequestSocketData) => {
   responseIPValid.value = { all: [], ipv4: [], ipv6: [], port: null };
   responseChinaIPValid.value = { all: [], ipv4: [], ipv6: [], port: null };
   let taskTimerId = null;
+
   socket.on('connect', () => {
     isConnected.value = true;
     Object.keys(nodeDelaySet).forEach((key) => delete nodeDelaySet[key]);
@@ -222,8 +223,9 @@ const socketio = async (params: RequestSocketData) => {
           taskQueue[`${params.token}`] = [message.did];
           taskTimerId = setTimeout(() => {
             singleTaskEnd.value = true;
+            singleTaskLoading.value = false;
             socket.disconnect();
-          }, 3000);
+          }, 5000);
         } else {
           taskQueue[`${params.token}`].push(message.did);
         }
@@ -255,6 +257,7 @@ const socketio = async (params: RequestSocketData) => {
         }
         if (taskQueue[`${params.token}`].length === nodeList.value.length) {
           singleTaskEnd.value = true;
+          singleTaskLoading.value = false;
           clearTimeout(taskTimerId);
           taskTimerId = null;
         }

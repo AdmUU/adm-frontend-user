@@ -20,8 +20,16 @@ export interface NodeRecord {
   packet_min?: number | string;
   packet_max?: number | string;
   packet_avg?: number | string;
+  isLoadingIP?: boolean;
 }
 export const nodeList = ref<NodeRecord[]>([]);
+export const singleTaskLoading = ref(false);
+export const continuousTaskLoading = ref(false);
+export const updateNodeLoadingState = (loading: boolean) => {
+  nodeList.value.forEach((node) => {
+    node.isLoadingIP = loading;
+  });
+};
 
 type PingDataMap = {
   [key: string]: number;

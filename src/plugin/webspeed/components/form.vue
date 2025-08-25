@@ -41,6 +41,7 @@
         type="primary"
         shape="round"
         size="large"
+        :loading="singleTaskLoading"
         @click.stop="handleQuickTest('quick')"
         >{{ $t('plugin.webspeed.form.button.singleTest') }}</a-button
       >
@@ -60,8 +61,6 @@
 
 <script lang="ts" setup>
   import { ref } from 'vue';
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  import { useRouter, useRoute } from 'vue-router';
   import validator from 'validator';
   import { useI18n } from 'vue-i18n';
 
@@ -79,6 +78,8 @@
     RequestSocketData,
   } from '../api/webspeed/socketio';
 
+  import { updateNodeLoadingState, singleTaskLoading } from '../api/node/node';
+
   const { t } = useI18n();
   const modalVisible = ref(false);
 
@@ -90,6 +91,8 @@
   const handleQuickTest = async (type: string) => {
     const host = inputHost.value;
     handleType.value = type;
+    updateNodeLoadingState(true);
+    singleTaskLoading.value = true;
     if (
       !validator.isIP(host, 4) &&
       !validator.isIP(host, 6) &&
@@ -131,7 +134,6 @@
     socketio(requestSocketData.value)
       .then(({ sendMessage }) => {
         const msg = `{"taskType":"webspeed","taskId":"${requestSocketData.value.task_id}"}`;
-
         pingHistory.addItem(inputHost.value);
         sendMessage('web-task', msg);
       })
@@ -168,7 +170,6 @@
     justify-content: center;
     align-items: center;
     background-color: var(--color-bg-2);
-
     width: 1300px;
     margin-right: auto;
     margin-left: auto;

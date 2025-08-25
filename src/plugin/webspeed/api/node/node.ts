@@ -27,8 +27,16 @@ export interface NodeRecord {
   download_speed?: number | string;
   expand?: string;
   http_headers?: string;
+  isLoadingIP?: boolean;
 }
 export const nodeList = ref<NodeRecord[]>([]);
+export const singleTaskLoading = ref(false);
+export const continuousTaskLoading = ref(false);
+export const updateNodeLoadingState = (loading: boolean) => {
+  nodeList.value.forEach((node) => {
+    node.isLoadingIP = loading;
+  });
+};
 
 type PingDataMap = {
   [key: string]: number;

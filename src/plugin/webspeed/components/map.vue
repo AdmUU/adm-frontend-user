@@ -219,9 +219,6 @@
     }
     return '--';
   };
-  console.log('Response nodeList: ', nodeList.value);
-  console.log('Response IPValid: ', responseIPValid.value);
-  console.log('Response ChinaIPValid: ', responseChinaIPValid.value);
   const countryNodeList = mapNodes(nodeList.value, 'country');
   let ispNodeList: MapStatNodes = [];
   let provinceNodeList: MapStatNodes = [];

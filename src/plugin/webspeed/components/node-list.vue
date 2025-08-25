@@ -25,8 +25,9 @@
 </template>
 
 <script lang="ts" setup>
-  import { computed, reactive } from 'vue';
+  import { computed, reactive, h } from 'vue';
   import type { TableColumnData } from '@arco-design/web-vue/es/table/interface';
+  import { Spin } from '@arco-design/web-vue';
   import { useI18n } from 'vue-i18n';
   import {
     nodeList,
@@ -144,8 +145,15 @@
       dataIndex: 'response_ip',
       width: 330,
       align: 'center',
-      render: ({ record }) =>
-        formatIPLocation(record.response_ip, record.response_ip_location),
+      render: ({ record }) => {
+        if (record.isLoadingIP) {
+          return h(Spin, { size: 12 });
+        }
+        return formatIPLocation(
+          record.response_ip,
+          record.response_ip_location
+        );
+      },
     },
     {
       title: t('plugin.webspeed.node.table.title.statusCode'),

@@ -2,7 +2,12 @@ import { ref } from 'vue';
 import useSocket from '@/utils/socketio';
 import axios, { AxiosRequestConfig } from 'axios';
 import tool from '@/utils/tool';
-import { nodeList, tcpPingDataMap } from '../node/node';
+import {
+  nodeList,
+  tcpPingDataMap,
+  singleTaskLoading,
+  continuousTaskLoading,
+} from '../node/node';
 import { initCanvas, pingChartCanvas } from '../node/canvas';
 
 type DelaySet = {
@@ -250,11 +255,20 @@ const socketio = async (params: RequestSocketData) => {
               : '--';
 
           initCanvas(pingChartCanvas[message.did], message.did, message.delay);
+          if (!taskQueue[`${params.token}`]) {
+            taskQueue[`${params.token}`] = [message.did];
+            taskTimerId = setTimeout(() => {
+              continuousTaskLoading.value = false;
+            }, 5000);
+          } else {
+            taskQueue[`${params.token}`].push(message.did);
+          }
         } else {
           if (!taskQueue[`${params.token}`]) {
             taskQueue[`${params.token}`] = [message.did];
             taskTimerId = setTimeout(() => {
               singleTaskEnd.value = true;
+              singleTaskLoading.value = false;
               socket.disconnect();
             }, 3000);
           } else {
@@ -266,6 +280,7 @@ const socketio = async (params: RequestSocketData) => {
             singleTaskEnd.value = true;
             clearTimeout(taskTimerId);
             taskTimerId = null;
+            singleTaskLoading.value = false;
           }
         }
       }
