@@ -100,7 +100,7 @@ importers:
         specifier: ^6.0.1
         version: 6.0.1(vite@6.3.5(@types/node@20.5.1)(less@4.4.1)(sugarss@2.0.0)(yaml@2.8.1))(vue@3.5.20(typescript@5.9.2))
       '@vitejs/plugin-vue-jsx':
-        specifier: ^5.0.1
+        specifier: 5.0.1
         version: 5.0.1(vite@6.3.5(@types/node@20.5.1)(less@4.4.1)(sugarss@2.0.0)(yaml@2.8.1))(vue@3.5.20(typescript@5.9.2))
       '@vue/babel-plugin-jsx':
         specifier: ^1.5.0
@@ -144,6 +144,9 @@ importers:
       lint-staged:
         specifier: ^15.5.2
         version: 15.5.2
+      postcss:
+        specifier: ^8.5.6
+        version: 8.5.6
       postcss-html:
         specifier: ^1.8.0
         version: 1.8.0
