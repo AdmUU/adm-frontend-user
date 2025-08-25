@@ -70,8 +70,7 @@
 
 <script lang="ts" setup>
   import { ref } from 'vue';
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  import { useRouter, useRoute } from 'vue-router';
+  import { useRoute } from 'vue-router';
   import validator from 'validator';
   import { useI18n } from 'vue-i18n';
 

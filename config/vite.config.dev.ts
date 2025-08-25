@@ -1,5 +1,5 @@
 import { mergeConfig, loadEnv } from 'vite';
-import eslint from 'vite-plugin-eslint';
+import eslint from "vite-plugin-eslint2";
 import baseConfig from './vite.config.base';
 
 const proxyApiPrefix = '/api';
@@ -77,11 +77,7 @@ export default ({ mode }) => {
         ],
       },
       plugins: [
-        eslint({
-          cache: true,
-          include: ['src/**/*.ts', 'src/**/*.tsx', 'src/**/*.vue'],
-          exclude: ['node_modules'],
-        }),
+        eslint(),
       ],
     },
     baseConfig

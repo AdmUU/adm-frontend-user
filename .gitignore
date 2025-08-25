@@ -10,6 +10,7 @@ dist-ssr
 *.bak
 *.back
 .idea
+.eslintcache
 components.d.ts
 .env
 .env.development

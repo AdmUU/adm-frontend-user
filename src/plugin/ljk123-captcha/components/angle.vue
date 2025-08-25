@@ -138,12 +138,12 @@
   const draggingWidth = computed(() => {
     return (
       Math.max(0, Math.min(currentX.value, sliderWidth.value)) +
-      // eslint-disable-next-line no-unsafe-optional-chaining
+       
       slider.value?.offsetWidth / 2
     );
   });
   const positionLeftStyle = computed(() => {
-    // eslint-disable-next-line no-shadow
+     
     const draggingWidth = Math.max(
       0,
       Math.min(currentX.value, sliderWidth.value)
@@ -189,7 +189,7 @@
         return new Promise((resolve) => {
           resolve({ validated: true, key: data.data.key });
         });
-        // eslint-disable-next-line no-else-return
+         
       } else {
         isError.value = true;
         if (data.msg === 'captchaIdInvalid' || data.data?.expire) {
@@ -245,13 +245,13 @@
   const endDrag = () => {
     if (dragging) {
       document.removeEventListener('mousemove', onMouseMove);
-      // eslint-disable-next-line no-use-before-define
+       
       document.removeEventListener('mouseup', onMouseUp);
       document.removeEventListener('touchmove', onTouchMove);
-      // eslint-disable-next-line no-use-before-define
+       
       document.removeEventListener('touchend', onTouchEnd);
       const touchEnd = new Date().getTime();
-      // eslint-disable-next-line no-multi-assign
+       
       const touchUse = (useTime.value = touchEnd - touchStart);
       if (
         currentX.value < 0 ||

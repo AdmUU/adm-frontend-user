@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import CryptoJS from 'crypto-js';
 import i18n from '@/locale';
 

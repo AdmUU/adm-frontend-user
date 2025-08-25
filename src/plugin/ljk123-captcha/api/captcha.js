@@ -1,5 +1,5 @@
-/* eslint-disable no-underscore-dangle */
-/* eslint-disable camelcase */
+ 
+ 
 import tool from '@/utils/tool';
 import axios from 'axios';
 /**

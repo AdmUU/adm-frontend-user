@@ -45,7 +45,7 @@ const redirect = route.query.redirect ? route.query.redirect : "/";
 const captchaType = ref(
   isDevelop.value ? 0 : parseInt(import.meta.env.VITE_APP_CAPTCHA_TYPE) || 0
 );
-const handleSubmit = ({ values, errors }) => {
+const handleSubmit = () => {
   captcha({
     type: captchaType.value,
     //   feedbackUrl: "https://hyperf.wiki/3.1/#/",

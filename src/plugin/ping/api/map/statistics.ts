@@ -1,5 +1,4 @@
-import { ref } from 'vue';
-import { NodeRecord, nodeList } from '../node/node';
+import { NodeRecord } from '../node/node';
 
 /**
  * Top Nodes
