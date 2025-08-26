@@ -65,7 +65,7 @@
       width: 350,
       align: 'center',
       render: (data: { record: TableData }) => {
-        if (data.record.isLoadingIP) {
+        if (data.record.is_loading) {
           return h(Spin, { size: 12 });
         }
         return data.record.response_ip || '--';
@@ -111,7 +111,7 @@
       width: 290,
       align: 'center',
       render: (data: { record: TableData }) => {
-        if (data.record.isLoadingIP) {
+        if (data.record.is_loading) {
           return h(Spin, { size: 12 });
         }
         return data.record.response_ip || '--';

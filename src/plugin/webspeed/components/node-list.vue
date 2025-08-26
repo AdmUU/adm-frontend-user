@@ -146,7 +146,7 @@
       width: 330,
       align: 'center',
       render: ({ record }) => {
-        if (record.isLoadingIP) {
+        if (record.is_loading) {
           return h(Spin, { size: 12 });
         }
         return formatIPLocation(

@@ -89,7 +89,7 @@
   } from '../api/ping/socketio';
 
   import {
-    updateNodeLoadingState,
+    updateTaskLoadingState,
     singleTaskLoading,
     continuousTaskLoading,
   } from '../api/node/node';
@@ -113,13 +113,6 @@
   const handlePing = async (protocol: string, pingtype: string) => {
     const host = inputHost.value;
     handlePingType.value = pingtype;
-    updateNodeLoadingState(true);
-    if (pingtype === 'single') {
-      singleTaskLoading.value = true;
-    }
-    if (pingtype === 'continuous') {
-      continuousTaskLoading.value = true;
-    }
     if (
       !validator.isIP(host, 4) &&
       !validator.isIP(host, 6) &&
@@ -158,6 +151,7 @@
           // modalText.value = t('plugin.ping.form.modal.apiError');
           // modalVisible.value = true;
         });
+        updateTaskLoadingState(pingtype);
     }
   };
   const createSocketIO = () => {

@@ -7,6 +7,7 @@ import {
   tcpPingDataMap,
   singleTaskLoading,
   continuousTaskLoading,
+  taskLoadingTimerId
 } from '../node/node';
 import { initCanvas, pingChartCanvas } from '../node/canvas';
 
@@ -155,6 +156,9 @@ const socketio = async (params: RequestSocketData) => {
         nodeList.value[
           tcpPingDataMap.value[message.did]
         ].response_ip = `${message.ip}`;
+        nodeList.value[
+          tcpPingDataMap.value[message.did]
+        ].is_loading = false;
 
         if (!responseIPAll.value[`${message.ip}`]) {
           responseIPAll.value[`${message.ip}`] = tool.checkIP(message.ip);
@@ -279,8 +283,10 @@ const socketio = async (params: RequestSocketData) => {
           if (taskQueue[`${params.token}`].length === nodeList.value.length) {
             singleTaskEnd.value = true;
             clearTimeout(taskTimerId);
+            clearTimeout(taskLoadingTimerId.value);
             taskTimerId = null;
             singleTaskLoading.value = false;
+            taskLoadingTimerId.value = null;
           }
         }
       }

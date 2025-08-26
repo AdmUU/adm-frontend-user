@@ -2,7 +2,7 @@ import { ref } from 'vue';
 import useSocket from '@/utils/socketio';
 import axios, { AxiosRequestConfig } from 'axios';
 import tool from '@/utils/tool';
-import { nodeList, tcpPingDataMap, singleTaskLoading } from '../node/node';
+import { nodeList, tcpPingDataMap, singleTaskLoading, taskLoadingTimerId } from '../node/node';
 
 type DelaySet = {
   [key: string]: number[];
@@ -155,6 +155,9 @@ const socketio = async (params: RequestSocketData) => {
         nodeList.value[
           tcpPingDataMap.value[message.did]
         ].response_ip = `${message.ip}`;
+        nodeList.value[
+          tcpPingDataMap.value[message.did]
+        ].is_loading = false;
 
         if (!responseIPAll.value[`${message.ip}`]) {
           responseIPAll.value[`${message.ip}`] = tool.checkIP(message.ip);
@@ -225,7 +228,7 @@ const socketio = async (params: RequestSocketData) => {
             singleTaskEnd.value = true;
             singleTaskLoading.value = false;
             socket.disconnect();
-          }, 5000);
+          }, 60000);
         } else {
           taskQueue[`${params.token}`].push(message.did);
         }
@@ -259,7 +262,9 @@ const socketio = async (params: RequestSocketData) => {
           singleTaskEnd.value = true;
           singleTaskLoading.value = false;
           clearTimeout(taskTimerId);
+          clearTimeout(taskLoadingTimerId.value);
           taskTimerId = null;
+          taskLoadingTimerId.value = null;
         }
       }
     }

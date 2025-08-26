@@ -20,15 +20,24 @@ export interface NodeRecord {
   packet_min?: number | string;
   packet_max?: number | string;
   packet_avg?: number | string;
-  isLoadingIP?: boolean;
+  is_loading?: boolean;
 }
 export const nodeList = ref<NodeRecord[]>([]);
 export const singleTaskLoading = ref(false);
 export const continuousTaskLoading = ref(false);
-export const updateNodeLoadingState = (loading: boolean) => {
-  nodeList.value.forEach((node) => {
-    node.isLoadingIP = loading;
-  });
+export const taskLoadingTimerId = ref(0);
+export const updateTaskLoadingState = (pingtype: string) => {
+    if (pingtype === 'single') {
+      singleTaskLoading.value = true;
+    }
+    if (pingtype === 'continuous') {
+      continuousTaskLoading.value = true;
+    }
+    clearTimeout(taskLoadingTimerId.value);
+    taskLoadingTimerId.value = setTimeout(() => {
+      singleTaskLoading.value = false;
+      continuousTaskLoading.value = false;
+    }, 5000);
 };
 
 type PingDataMap = {
@@ -117,6 +126,7 @@ export async function queryNodeList(
     packet_min: '--',
     packet_max: '--',
     packet_avg: '--',
+    is_loading: singleTaskLoading.value
   }));
   tcpPingDataMap.value = createTcpPingDataMap(nodeList.value);
   return nodeList.value;

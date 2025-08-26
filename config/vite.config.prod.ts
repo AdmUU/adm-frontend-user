@@ -14,9 +14,9 @@ export default mergeConfig(
       rollupOptions: {
         output: {
           manualChunks: {
-            arco: ['@arco-design/web-vue'],
-            chart: ['echarts', 'vue-echarts'],
-            vue: ['vue', 'vue-router', 'pinia', '@vueuse/core', 'vue-i18n'],
+            'vue-ui': ['vue', '@arco-design/web-vue'],
+            'vue-ecosystem': ['vue-router', 'pinia', '@vueuse/core', 'vue-i18n'],
+            'charts': ['echarts', 'vue-echarts']
           },
         },
       },

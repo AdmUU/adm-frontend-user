@@ -78,7 +78,7 @@
     RequestSocketData,
   } from '../api/webspeed/socketio';
 
-  import { updateNodeLoadingState, singleTaskLoading } from '../api/node/node';
+  import { singleTaskLoading, updateTaskLoadingState } from '../api/node/node';
 
   const { t } = useI18n();
   const modalVisible = ref(false);
@@ -91,8 +91,6 @@
   const handleQuickTest = async (type: string) => {
     const host = inputHost.value;
     handleType.value = type;
-    updateNodeLoadingState(true);
-    singleTaskLoading.value = true;
     if (
       !validator.isIP(host, 4) &&
       !validator.isIP(host, 6) &&
@@ -128,6 +126,7 @@
         .catch((error) => {
           console.error('requestSocket Error:', error);
         });
+        updateTaskLoadingState()
     }
   };
   const createSocketIO = () => {
