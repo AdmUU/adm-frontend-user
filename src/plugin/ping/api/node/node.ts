@@ -126,7 +126,7 @@ export async function queryNodeList(
     packet_min: '--',
     packet_max: '--',
     packet_avg: '--',
-    is_loading: singleTaskLoading.value
+    is_loading: singleTaskLoading.value || continuousTaskLoading.value
   }));
   tcpPingDataMap.value = createTcpPingDataMap(nodeList.value);
   return nodeList.value;

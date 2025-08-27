@@ -347,7 +347,7 @@
       width: NODE_NAME_WIDTH,
     },
     {
-      title: t('plugin.ping.map.table.title.responseTimeAvg'),
+      title: t('plugin.webspeed.node.table.title.responseTimeAvg'),
       dataIndex: 'packet_avg',
       width: DELAY_WIDTH,
       align: 'center',
@@ -366,7 +366,7 @@
       width: NODE_NAME_WIDTH,
     },
     {
-      title: t('plugin.ping.map.table.title.responseTimeAvg'),
+      title: t('plugin.webspeed.node.table.title.responseTimeAvg'),
       dataIndex: 'packet_avg',
       width: DELAY_WIDTH,
       align: 'center',
@@ -384,7 +384,7 @@
       align: 'center',
     },
     {
-      title: t('plugin.ping.map.table.title.responseTimeAvg'),
+      title: t('plugin.webspeed.node.table.title.responseTimeAvg'),
       dataIndex: 'delay1',
       width: DELAY_WIDTH,
       align: 'center',
@@ -396,7 +396,7 @@
       align: 'center',
     },
     {
-      title: t('plugin.ping.map.table.title.responseTimeAvg'),
+      title: t('plugin.webspeed.node.table.title.responseTimeAvg'),
       dataIndex: 'delay2',
       width: DELAY_WIDTH,
       align: 'center',
@@ -425,7 +425,7 @@
       width: NODE_NAME_WIDTH,
     },
     {
-      title: t('plugin.ping.map.table.title.responseTime'),
+      title: t('plugin.webspeed.node.table.title.responseTime'),
       dataIndex: 'response_time',
       width: DELAY_WIDTH,
       align: 'center',
@@ -444,7 +444,7 @@
       width: NODE_NAME_WIDTH,
     },
     {
-      title: t('plugin.ping.map.table.title.responseTime'),
+      title: t('plugin.webspeed.node.table.title.responseTime'),
       dataIndex: 'response_time',
       width: DELAY_WIDTH,
       align: 'center',
